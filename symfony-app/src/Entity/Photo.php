@@ -36,7 +36,7 @@ class Photo
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'photos')]
     #[ORM\JoinColumn(nullable: false)]
-    private User $user;
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -98,7 +98,7 @@ class Photo
         return $this;
     }
 
-    public function getUser(): User
+    public function getUser(): ?User
     {
         return $this->user;
     }
