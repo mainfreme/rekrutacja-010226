@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Likes;
+namespace App\Repository;
 
 use App\Entity\Photo;
 use App\Entity\User;

@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Likes;
+namespace App\Entity;
 
 use App\Entity\Photo;
 use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\LikeRepository;
 
 #[ORM\Entity(repositoryClass: LikeRepository::class)]
 #[ORM\Table(name: 'likes')]
