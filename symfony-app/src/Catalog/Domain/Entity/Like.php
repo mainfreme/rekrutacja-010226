@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Catalog\Domain\Entity;
 
-use App\Entity\Photo;
-use App\Entity\User;
+use App\Catalog\Infrastructure\Repository\DoctrineLikeRepository;
+use App\Identity\Domain\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\LikeRepository;
 
-#[ORM\Entity(repositoryClass: LikeRepository::class)]
+#[ORM\Entity(repositoryClass: DoctrineLikeRepository::class)]
 #[ORM\Table(name: 'likes')]
 class Like
 {
