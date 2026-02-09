@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Catalog\Domain\Entity;
 
-use App\Repository\PhotoRepository;
+use App\Catalog\Infrastructure\Repository\DoctrinePhotoRepository;
+use App\Identity\Domain\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PhotoRepository::class)]
+#[ORM\Entity(repositoryClass: DoctrinePhotoRepository::class)]
 #[ORM\Table(name: 'photos')]
 class Photo
 {

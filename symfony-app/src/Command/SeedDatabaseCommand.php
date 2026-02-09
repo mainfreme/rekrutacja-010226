@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Entity\AuthToken;
-use App\Entity\Photo;
-use App\Entity\User;
+use App\Catalog\Domain\Entity\Photo;
+use App\Identity\Domain\Entity\AuthToken;
+use App\Identity\Domain\Entity\User;
+use App\Identity\Domain\ValueObject\Email;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -72,7 +73,7 @@ class SeedDatabaseCommand extends Command
         foreach ($usersData as $userData) {
             $user = new User();
             $user->setUsername($userData['username'])
-                ->setEmail($userData['email'])
+                ->setEmail(new Email($userData['email']))
                 ->setName($userData['name'])
                 ->setLastName($userData['lastName'])
                 ->setAge($userData['age'])
