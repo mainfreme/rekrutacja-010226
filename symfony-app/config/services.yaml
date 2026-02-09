@@ -7,3 +7,20 @@ services:
         resource: '../src/'
         exclude:
             - '../src/Kernel.php'
+            - '../src/Identity/Domain/Entity/'
+            - '../src/Identity/Domain/ValueObject/'
+            - '../src/Catalog/Domain/Entity/'
+
+    # Repository interfaces
+    App\Identity\Domain\Repository\AuthRepositoryInterface:
+        alias: App\Identity\Infrastructure\Repository\DoctrineAuthRepository
+    App\Identity\Domain\Repository\UserRepositoryInterface:
+        alias: App\Identity\Infrastructure\Repository\DoctrineUserRepository
+    App\Catalog\Domain\Repository\PhotoRepositoryInterface:
+        alias: App\Catalog\Infrastructure\Repository\DoctrinePhotoRepository
+    App\Catalog\Domain\Repository\LikeRepositoryInterface:
+        alias: App\Catalog\Infrastructure\Repository\DoctrineLikeRepository
+
+    # Message bus targets for DI
+    Symfony\Component\Messenger\MessageBusInterface $commandBus: '@command.bus'
+    Symfony\Component\Messenger\MessageBusInterface $queryBus: '@query.bus'

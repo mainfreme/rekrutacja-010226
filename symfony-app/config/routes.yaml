@@ -1,6 +1,22 @@
-# Define your routes here
-controllers:
+# Define your routes 
+
+# Catalog bounded context
+catalog_controllers:
     resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+        path: ../src/Catalog/UI/Http/Controller/
+        namespace: App\Catalog\UI\Http\Controller
+    type: attribute
+
+# Identity bounded context
+identity_controllers:
+    resource:
+        path: ../src/Identity/UI/Http/Controller/
+        namespace: App\Identity\UI\Http\Controller
+    type: attribute
+
+# Frontend
+frontend_controllers:
+    resource:
+        path: ../src/Frontend/Application/UI/Http/Controller/
+        namespace: App\Frontend\Application\UI\Http\Controller
     type: attribute
