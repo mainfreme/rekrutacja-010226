@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Identity\Domain\Entity;
 
-use App\Repository\UserRepository;
+use App\Catalog\Domain\Entity\Photo;
+use App\Identity\Domain\ValueObject\Email;
+use App\Identity\Infrastructure\Repository\DoctrineUserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Identity\Domain\ValueObject\AuthToken as TokenVO;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Entity(repositoryClass: DoctrineUserRepository::class)]
 #[ORM\Table(name: 'users')]
 class User
 {
@@ -35,6 +38,9 @@ class User
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $bio = null;
+
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $token = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Photo::class, cascade: ['persist', 'remove'])]
     private Collection $photos;
@@ -65,9 +71,9 @@ class User
         return $this->email;
     }
 
-    public function setEmail(string $email): self
+    public function setEmail(Email $email): self
     {
-        $this->email = $email;
+        $this->email = $email->getValue();
         return $this;
     }
 
@@ -137,5 +143,16 @@ class User
     {
         $this->photos->removeElement($photo);
         return $this;
+    }
+
+    public function setToken(string $token): self
+    {
+        $this->token = $token;
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
     }
 }
