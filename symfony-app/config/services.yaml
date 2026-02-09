@@ -1,4 +1,8 @@
 services:
+    _instanceof:
+        App\Catalog\Domain\Service\Import\ImportStrategyInterface:
+            tags: [ 'app.import_strategy' ]
+
     _defaults:
         autowire: true
         autoconfigure: true
@@ -21,6 +25,10 @@ services:
     App\Catalog\Domain\Repository\LikeRepositoryInterface:
         alias: App\Catalog\Infrastructure\Repository\DoctrineLikeRepository
 
-    # Message bus targets for DI
+    # Message bus
     Symfony\Component\Messenger\MessageBusInterface $commandBus: '@command.bus'
     Symfony\Component\Messenger\MessageBusInterface $queryBus: '@query.bus'
+
+    #Strategie importu
+    App\Catalog\Infrastructure\Import\Strategy\ImportRestApiStrategy:
+        tags: [ 'app.import_strategy' ]

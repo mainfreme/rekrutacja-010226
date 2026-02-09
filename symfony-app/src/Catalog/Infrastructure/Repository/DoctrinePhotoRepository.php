@@ -6,6 +6,7 @@ namespace App\Catalog\Infrastructure\Repository;
 
 use App\Catalog\Domain\Entity\Photo;
 use App\Catalog\Domain\Repository\PhotoRepositoryInterface;
+use App\Identity\Domain\Entity\User;
 use App\Shared\Application\Dto\PhotoFilterDto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +18,34 @@ class DoctrinePhotoRepository extends ServiceEntityRepository implements PhotoRe
         parent::__construct($registry, Photo::class);
     }
 
+    /**
+     * @param User $user
+     * @param array<string|int> $photo
+     * @return void
+     */
+    #[\Override]
+    public function addPhoto(User $user, array $photo): void
+    {
+        $photoModel = new Photo();
+        $photoModel->setUser($user);
+        $photoModel->setImageUrl($photo['photo_url']);
+
+        $em = $this->getEntityManager();
+        $em->persist($photoModel);
+        $em->flush();
+    }
+
+    public function photoExist(User $user, array $photo): bool
+    {
+        return $this->createQueryBuilder('p')
+            ->join('p.user', 'u')
+            ->andWhere('u.id = :id')
+            ->setParameter('id', $user->getId())
+            ->andWhere('p.imageUrl = :imageUrl')
+            ->setParameter('imageUrl', (string)$photo['photo_url'])
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
     /**
      * @param int $id
      * @return Photo|null
