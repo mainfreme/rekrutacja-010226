@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Entity;
 
-use App\Entity\Photo;
-use App\Entity\User;
+use App\Catalog\Domain\Entity\Photo;
+use App\Identity\Domain\Entity\User;
 use PHPUnit\Framework\TestCase;
 
 class PhotoTest extends TestCase

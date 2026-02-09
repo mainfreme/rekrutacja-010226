@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Likes;
 
-use App\Entity\Photo;
-use App\Entity\User;
+use App\Catalog\Domain\Entity\Photo;
+use App\Identity\Domain\Entity\User;
 use App\Likes\Like;
 use PHPUnit\Framework\TestCase;
 
