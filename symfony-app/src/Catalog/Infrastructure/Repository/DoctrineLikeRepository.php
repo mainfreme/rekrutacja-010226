@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Catalog\Infrastructure\Repository;
 
-use App\Entity\Photo;
-use App\Entity\User;
+use App\Catalog\Domain\Entity\Like;
+use App\Catalog\Domain\Entity\Photo;
+use App\Catalog\Domain\Repository\LikeRepositoryInterface;
+use App\Identity\Domain\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-final class LikeRepository extends ServiceEntityRepository implements LikeRepositoryInterface
+final class DoctrineLikeRepository extends ServiceEntityRepository implements LikeRepositoryInterface
 {
     private ?User $user;
 
@@ -26,26 +28,17 @@ final class LikeRepository extends ServiceEntityRepository implements LikeReposi
     #[\Override]
     public function unlikePhoto(Photo $photo): void
     {
-        $em = $this->getEntityManager();
-
-        $like = $em->createQueryBuilder()
-            ->select('l')
-            ->from(Like::class, 'l')
+        $like = $this->createQueryBuilder('l')
             ->where('l.user = :user')
             ->andWhere('l.photo = :photo')
             ->setParameter('user', $this->user)
             ->setParameter('photo', $photo)
-            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
 
         if ($like) {
+            $em = $this->getEntityManager();
             $em->remove($like);
-            $em->flush();
-
-            $photo->setLikeCounter($photo->getLikeCounter() - 1);
-            $em->persist($photo);
-
             $em->flush();
         }
     }

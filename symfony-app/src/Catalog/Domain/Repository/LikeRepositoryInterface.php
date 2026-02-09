@@ -1,13 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Catalog\Domain\Repository;
 
-use App\Entity\Photo;
-use App\Entity\Like;
+use App\Catalog\Domain\Entity\Like;
+use App\Catalog\Domain\Entity\Photo;
+use App\Identity\Domain\Entity\User;
 
 interface LikeRepositoryInterface
 {
+    public function setUser(?User $user): void;
+
     public function unlikePhoto(Photo $photo): void;
 
     public function hasUserLikedPhoto(Photo $photo): bool;
