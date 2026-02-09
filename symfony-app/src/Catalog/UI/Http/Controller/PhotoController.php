@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Catalog\UI\Http\Controller;
 
+use App\Catalog\Application\Command\ImportDataCommand;
 use App\Catalog\Application\Command\ToggleLikeCommand;
 use App\Catalog\Application\Exception\LikeException;
 use App\Catalog\Application\Exception\PhotoNotExistException;
 use App\Catalog\Application\Query\ImportFileQuery;
 use App\Catalog\Domain\Entity\Photo;
+use App\Catalog\Domain\Exception\ExternalServiceUnavailableException;
 use App\Catalog\UI\Form\PhotoType;
 use App\Identity\Application\Exception\UserNotFoundException;
 use App\Identity\Application\Query\GetUserProfileQuery;
@@ -16,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Annotation\Route;
@@ -59,33 +62,27 @@ class PhotoController extends AbstractController
         $userId = $session->get('user_id');
 
         if (!$userId) {
-            return $this->redirectToRoute('home');
-        }
-
-        try {
-            $user = $this->dispatch(new GetUserProfileQuery($userId));
-        } catch (UserNotFoundException $e) {
-            $this->addFlash('error', $e->getMessage());
             $session->clear();
             return $this->redirectToRoute('home');
         }
 
-        $product = new Photo();
-        $form = $this->createForm(PhotoType::class, $product);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-
-            $tokenImages = $this->dispatch(new ImportFileQuery($user));
-
-            throw new \Exception($tokenImages);
+        try {
+            $this->commandBus->dispatch(new ImportDataCommand($userId, 'PhoenixApi_json_api'));
+            $this->addFlash('success', 'Poprawnie zaimportowano');
+        } catch (HandlerFailedException $e) {
+            $previousException = $e->getPrevious();
+            if ($previousException instanceof UserNotFoundException) {
+                $this->addFlash('error', 'Nie znaleziono użytkownika.');
+            } elseif ($previousException instanceof ExternalServiceUnavailableException) {
+                $this->addFlash('error', 'Błąd połączenia z zewnętrznym serwisem. Spróbuj później.');
+            } else {
+                $this->addFlash('error', 'Wystąpił nieoczekiwany błąd. '. $e->getMessage());
+            }
+        } catch (\Throwable $e) {
+            $this->addFlash('error', 'Błąd systemowy.');
         }
 
-//        return $this->render('profile/add_image.html.twig', [
-//            'user' => $user,
-//            'form' => $form,
-//        ]);
+        return $this->redirectToRoute('profile');
     }
 
     private function dispatch(object $query): mixed
